@@ -26,6 +26,7 @@ def notafilialCreate(request):
             notafilial = form.save(commit=False)
             notafilial.idempresa = request.user.idempresa
             notafilial.idfilial = request.user.idfilial
+            notafilial.criadopor = request.user
             notafilial.save()
             modulo = carrega_modulo('av-cadastro', request.user)
             context.update(modulo)

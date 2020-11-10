@@ -2,7 +2,7 @@ from rest_framework import serializers
 from django.db.models import Avg
 
 from av.avcadastro.models import Indicador, PainelGeral, DetalheIndicador, NotaFilial, Nota
-from core.models import Filial, Empresa 
+from core.models import Filial, Empresa, CustomUsuario
 
 
 class FilialSerializer(serializers.ModelSerializer):
@@ -125,4 +125,18 @@ class NotaSerializer(serializers.ModelSerializer):
             'fim',
             'cor',
             'criadopor'           
+        )
+
+
+class UsuarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUsuario
+        fields = (
+            'email',
+            'first_name',
+            'last_name'
+            'fone',
+            'idfilial',
+            'idempresa',
+            'perfil'
         )
