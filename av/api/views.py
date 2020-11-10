@@ -11,6 +11,7 @@ class CreateModelMixinUser(mixins.CreateModelMixin):
     """
     Create a model instance.
     """
+
     def create(self, request, *args, **kwargs):
         request.data.update({'criadopor': request.user.id})
         serializer = self.get_serializer(data=request.data)
@@ -25,6 +26,7 @@ class CreateModelMixinUserFilialEmpresa(mixins.CreateModelMixin):
     """
     Create a model instance.
     """
+
     def create(self, request, *args, **kwargs):
         request.data.update({'criadopor': request.user.id})
         serializer = self.get_serializer(data=request.data)
@@ -61,6 +63,12 @@ class ListModelMixinEmpresa(mixins.ListModelMixin):
 
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+
+"""
+API de Relação de Filiais
+"""
+
 
 class FilialViewSet(
     ListModelMixinEmpresa,
@@ -108,7 +116,7 @@ class DetalheIndicadorViewSet(
 ):
     queryset = DetalheIndicador.objects.all()
     serializer_class = DetalheIndicadorSerializer
-    
+
 
 class NotaFilialViewSet(
     ListModelMixinFilialEmpresa,
@@ -120,7 +128,7 @@ class NotaFilialViewSet(
 ):
     queryset = NotaFilial.objects.all()
     serializer_class = NotaFilialSerializer
-    
+
 
 class NotaViewSet(
     mixins.ListModelMixin,

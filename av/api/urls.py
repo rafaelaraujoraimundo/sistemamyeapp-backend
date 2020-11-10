@@ -1,8 +1,11 @@
+from django.conf.urls import url
 from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from .views import (FilialViewSet, EmpresaViewSet, PainelGeralViewSet, DetalheIndicadorViewSet, NotaFilialViewSet,
                     NotaViewSet)
+
+
 
 router = SimpleRouter()
 router.register('filial', FilialViewSet)
