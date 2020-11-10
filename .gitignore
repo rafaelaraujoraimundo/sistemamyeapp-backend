@@ -1,0 +1,6 @@
+../sistemaRR/.idea
+venv
+*.pyc
+sistemaRR/__pycache__/
+static
+media

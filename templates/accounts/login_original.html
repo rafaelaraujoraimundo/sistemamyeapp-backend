@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% load bootstrap %}
+{% block main %}
+<div class="align-self-center ml-5 col-7 my-5">
+<div class="card">
+  <h5 class="card-header">Sistema RR</h5>
+  <div class="card-body">
+    <h5 class="card-title">Login</h5>
+    <p class="card-text">
+        
+      <form method="post">
+    {% csrf_token %}
+     {{ form|bootstrap }}
+    <button class="btn btn-info" type="submit">login</button>
+    </div>
+</form>
+
+  </div>
+</div>
+
+{% endblock %}

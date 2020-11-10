@@ -1,0 +1,143 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block main %}
+
+        <div class="row">
+            <div alt="Responsive image" class="col-2"> <img class="rounded img-fluid img-rounded" src="{{ usuario.idempresa.logoempresa.thumb.url }}" alt="User picture"></div>
+            
+            
+            <div class="col-5">
+                <div class="row">
+                    <div class="col-6">
+                    <label for="ano">Ano</label>
+                     <select class="form-control" id="ano">
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                     </select>
+                </div>
+                    <div class="col-6">
+                    <label for="periodo">Período</label>
+                     <select class="form-control" id="periodo">
+                          <option>1</option>
+                          <option>2</option>
+                          <option>3</option>
+                          <option>4</option>
+                          <option>5</option>
+                     </select>
+                    
+            </div>
+                </div>
+                <div style="background-color: blue;" class="w-auto p-3 ">
+                    <p  style="text-align:center">STATUS DA UNIDADE</p>
+                </div>
+            </div>
+            
+            
+            
+             <div class="col-3"> 
+             
+                 
+                 <div class="table-responsive-sm">
+       <table class="table-sm table">
+  <thead>
+    <tr>
+      <th ></th>
+      <th ></th>
+    </tr>
+  </thead>
+  <tbody>
+   {% for nota in notas %}
+    <tr>
+      <th class="text-light" bgcolor="{{ nota.cor }}" scope="row"> {{ nota.nota }} </th>
+        
+      <td class="text-light" bgcolor="{{ nota.cor }}" >=> {{ nota.inicio }} <= {{ nota.fim }} </td>
+
+    </tr>
+     {% endfor %}
+  </tbody>
+</table>
+     </div>    
+                 
+                 
+             
+             </div>
+            <div style="background-color: gray" class="col-2"> NOTAS UNIDADE </div>
+        </div>
+<div class="row">
+    <div class="col-6">
+        
+        
+        
+               <table class="table-sm table">
+  <thead>
+    <tr>
+      <th scope="col">Indicador</th>
+      <th scope="col">Orçado / Meta</th>
+        <th scope="col">Realizado</th>
+        <th scope="col"> Pontuação</th>
+        <th scope="col"> Peso</th>
+    </tr>
+  </thead>
+  <tbody>
+        {% for painel in painelgeral %}
+    <tr>
+ <td scope="row">   {{ painel.descricao }} </td>
+ <td scope="row">   {{painel.orcadometa }} </td>
+ <td scope="row">   {{ painel.realizado }} </td>
+ <td scope="row">   {{  painel.pontuacao }} </td>
+ <td scope="row">   {{painel.peso }} </td>
+
+    </tr>
+     {% endfor %}
+  </tbody>
+</table>
+          
+    </div>
+     <div  class="col-6">
+         <div class="chart-containeq" style="position: sticky; height:30vh; width:25vw">
+               <div class="align-center" id="grafico" style="width: 570px; height: 250px; "></div>
+         </div>
+</div>
+            <div style="background-color: orange" class="row">INDICADORES    </div>
+    
+
+
+<script>
+        function plot(type='bar'){
+            type =  type.toString().toLowerCase().trim()
+            let serie = {};
+            if(type=='pie') {
+                serie = {
+                values: [{{ salarioM }}, {{ salarioF }}],
+                labels: ['Masculino','Feminino'],
+                type: type
+                }
+            } else {
+            serie = {
+                x: ["Balão Magico",
+            "Fevereiro",
+            "Março",
+            "Abril",
+            "Maio",
+            "Junho",
+            "Julho",
+            "Agosto",
+            "Setembro",
+            "Outubro",
+            "Novembro",
+            "Dezembro"],
+                y: [ {{ idadeM }}, {{ idadeF }}, {{ idadeM }}, {{ idadeF }},{{ idadeM }}, {{ idadeF }},{{ idadeM }}, {{ idadeF }},{{ idadeM }}, {{ idadeF }},{{ idadeM }}, {{ idadeF }}],
+                type: type
+            }
+            }
+            const data = [serie]
+            Plotly.newPlot('grafico', data)
+        }
+        plot()
+</script>
+    
+    {% endblock main %}
