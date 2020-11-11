@@ -1,6 +1,6 @@
 from decimal import *
 
-from av.avcadastro.models import DetalheIndicador, PainelGeral, Indicador
+from av.avcadastro.models import DetalheIndicador, PainelGeral, Indicador, NotaFilial, Nota
 from core.models import Empresa, Filial
 
 
@@ -8,7 +8,9 @@ def calcular_indicador(empresaid, filialid, periodo, user):
     empresa = Empresa.objects.get(id=empresaid)
     filial = Filial.objects.get(id=filialid)
     indicadores = Indicador.objects.all()
-
+    peso_nota = Decimal(0)
+    pontuacao_nota = Decimal(0)
+    
     for indicador in indicadores:
         if indicador.modo == 'UNI':
             painelgeral = PainelGeral()
@@ -26,11 +28,24 @@ def calcular_indicador(empresaid, filialid, periodo, user):
             if detalheindicador.Inverso:
                 if detalheindicador.resultado <= detalheindicador.meta:
                     painelgeral.pontuacao = painelgeral.peso
+
+                    """
+                    Somando pesos e pontuações para fazer o quadro de Notas por filial
+                    """
+                    peso_nota = peso_nota + painelgeral.peso
+                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
                 else:
                     painelgeral.pontuacao = 0
             else:
                 if detalheindicador.resultado >= detalheindicador.meta:
                     painelgeral.pontuacao = painelgeral.peso
+                    
+                    """
+                    Somando pesos e pontuações para fazer o quadro de Notas por filial
+                    """
+                    peso_nota = peso_nota + painelgeral.peso
+                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+                
                 else:
                     painelgeral.pontuacao = 0
 
@@ -69,7 +84,14 @@ def calcular_indicador(empresaid, filialid, periodo, user):
             painelgeral.pontuacao = painelgeral.realizado * Decimal(100) / painelgeral.orcadometa
 
             painelgeral.pontuacao = painelgeral.pontuacao * painelgeral.peso / Decimal(100)
-
+            
+            """
+            Somando pesos e pontuações para fazer o quadro de Notas por filial
+            """
+            peso_nota = peso_nota + painelgeral.peso
+            pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+            
+            
             painelgeral.save()
             del painelgeral
 
@@ -98,17 +120,39 @@ def calcular_indicador(empresaid, filialid, periodo, user):
             if indicador.Inverso:
                 if painelgeral.realizado <= painelgeral.orcadometa:
                     painelgeral.pontuacao = painelgeral.peso
+                    """
+                    Somando pesos e pontuações para fazer o quadro de Notas por filial
+                    """
+                    peso_nota = peso_nota + painelgeral.peso
+                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
                 else:
                     painelgeral.pontuacao = 0
             else:
                 if painelgeral.realizado >= painelgeral.orcadometa:
                     painelgeral.pontuacao = painelgeral.peso
+                    """
+                    Somando pesos e pontuações para fazer o quadro de Notas por filial
+                    """
+                    peso_nota = peso_nota + painelgeral.peso
+                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
                 else:
                     painelgeral.pontuacao = 0
             
             painelgeral.save()
             del painelgeral
-                
+   
+    notafilial = NotaFilial()
+    notafilial.idempresa = empresa
+    notafilial.idfilial = filial
+    notafilial.criadopor = user
+    notafilial.periodo = periodo
+    
+    nota_filial = pontuacao_nota * Decimal(100) / peso_nota
+    nota = Nota.objects.get(inicio__lte=nota_filial, fim__gte=nota_filial)
+    notafilial.nota = nota.nota
+    notafilial.save()
+   
+        
                 
 def calculo_indicador(inicio, depois, tipo):
     if tipo == "CSM":
