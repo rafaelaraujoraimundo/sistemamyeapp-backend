@@ -7,7 +7,7 @@ from sistemaRR import settings
 
 class Base(models.Model):
     criado = models.DateField('Data de Criação', auto_now_add=True)
-    criadopor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
+    criadopor = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.DO_NOTHING)
     modificado = models.DateField('Data de Atualização', auto_now=True)
     ativo = models.BooleanField('Ativo?', default=True)
 
@@ -17,13 +17,13 @@ class Base(models.Model):
 
 
 class Indicador(Base):
-    idempresa = models.ForeignKey(Empresa, models.CASCADE, related_name='empresaindicador', null=False)
+    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, related_name='empresaindicador', null=False)
     CHOICE_MODO = (
         ("CAL", "CALCULO"),
         ("CON", "CONTAR"),
         ("UNI", "UNITARIO")
     )
-    idfilial = models.ForeignKey(Filial, models.CASCADE, related_name='filialindicador', blank=False, null=False)
+    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filialindicador', blank=False, null=False)
     codigo = models.IntegerField(default='1')
     descricao = models.CharField(max_length=100, blank=False, null=False)
     peso = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
@@ -40,10 +40,10 @@ class Indicador(Base):
     
 
 class PainelGeral(Base):
-    idempresa = models.ForeignKey(Empresa, models.CASCADE, related_name='empresaspainel', null=False)
+    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, related_name='empresaspainel', null=False)
     periodo = models.CharField(max_length=6, blank=False, null=False)
-    idfilial = models.ForeignKey(Filial, models.CASCADE, related_name='filial', blank=False, null=False)
-    idindicador = models.ForeignKey(Indicador, models.CASCADE, related_name='painelindicador', null=False)
+    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filial', blank=False, null=False)
+    idindicador = models.ForeignKey(Indicador, models.DO_NOTHING, related_name='painelindicador', null=False)
     orcadometa = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     realizado = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     peso = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
@@ -68,10 +68,10 @@ class DetalheIndicador(Base):
         ("CON", "CONTAR"),
         ("NDA", "NAO FAZ PARTE")
     )
-    idempresa = models.ForeignKey(Empresa, models.CASCADE, related_name='empresasdetalheindicador', null=False)
+    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, related_name='empresasdetalheindicador', null=False)
     periodo = models.CharField(max_length=6, blank=False, null=False)
-    idfilial = models.ForeignKey(Filial, models.CASCADE, related_name='filialdetalheindicador', blank=False, null=False)
-    idindicador = models.ForeignKey(Indicador, models.CASCADE, related_name='indicador', blank=False, null=False)
+    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filialdetalheindicador', blank=False, null=False)
+    idindicador = models.ForeignKey(Indicador, models.DO_NOTHING, related_name='indicador', blank=False, null=False)
     descricao = models.CharField(max_length=100, blank=False, null=False, unique=True)
     meta = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     resultado = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
@@ -95,8 +95,8 @@ class NotaFilial(Base):
         ("D", "D"),
         ("E", "E")
     )
-    idempresa = models.ForeignKey(Empresa, models.CASCADE, related_name='empresasnota', null=False)
-    idfilial = models.ForeignKey(Filial, models.CASCADE, related_name='filialnota', blank=False, null=False)
+    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, related_name='empresasnota', null=False)
+    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filialnota', blank=False, null=False)
     periodo = models.CharField(max_length=6, blank=False, null=False)
     nota = models.CharField(max_length=1, choices=CHOICE_NOTA, blank=False, null=False)
 
