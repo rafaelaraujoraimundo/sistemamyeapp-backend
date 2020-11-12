@@ -3,7 +3,7 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from .views import (FilialViewSet, EmpresaViewSet, PainelGeralViewSet, DetalheIndicadorViewSet, NotaFilialViewSet,
-                    NotaViewSet)
+                    NotaViewSet, CalculoMensal)
 
 
 
@@ -17,6 +17,6 @@ router.register('nota', NotaViewSet)
 
 
 urlpatterns = [
-    #path('', FileUploadView.as_view())
+    path('calcular/', CalculoMensal.as_view())
 ]
 

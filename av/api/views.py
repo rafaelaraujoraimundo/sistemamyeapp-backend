@@ -1,8 +1,11 @@
 from rest_framework import viewsets, status, request
+from django.core import serializers
 from rest_framework import mixins
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from av.avcadastro.models import Filial, Empresa, Indicador, PainelGeral, DetalheIndicador, NotaFilial, Nota
+from .calcular import calcular_indicador
 from .serializers import EmpresaSerializer, FilialSerializer, IndicadorSerializer, PainelGeralSerializer, \
     DetalheIndicadorSerializer, NotaFilialSerializer, NotaSerializer
 
@@ -136,3 +139,22 @@ class NotaViewSet(
 ):
     queryset = Nota.objects.all()
     serializer_class = NotaSerializer
+
+
+class CalculoMensal(APIView):
+    """
+    API de Avaliação
+    """
+    def post(self, request):
+        periodo = request.data['periodo']
+        NotaFilial.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial, periodo=periodo).delete()
+        PainelGeral.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial, periodo=periodo).delete()
+        
+        try:
+            calcular_indicador(request.user.idempresa.id, request.user.idfilial.id, periodo, request.user)
+            return Response({"result": {"empresa": request.user.idempresa.nomeempresa, "filial": request.user.idfilial.nomefilial, "Periodo": 
+                periodo, "Status": "OK"}}, status=status.HTTP_201_CREATED)
+        except  Exception as e:
+            return Response({"result": {"empresa": request.user.idempresa.nomeempresa, "filial": request.user.idfilial.nomefilial, "Periodo":
+                periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
+
