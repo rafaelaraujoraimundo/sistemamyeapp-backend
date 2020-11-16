@@ -3,9 +3,15 @@ from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse
 from django.shortcuts import render
 from django.template import loader
+from django.core import serializers
+from rest_framework.authtoken.views import ObtainAuthToken
 
 from core.carrega_modulos import carrega_modulo
+from core.models import CustomUsuario
 from core.valida_perfil import valida_perfil
+
+from rest_framework.authtoken.models import Token
+from rest_framework.response import Response
 
 
 @login_required(login_url="/login/")
@@ -70,4 +76,18 @@ def pages(request):
         html_template = loader.get_template('page-500.html')
         return HttpResponse(html_template.render(context, request))
 
+
+class ObtainAuthTokenUser(ObtainAuthToken):
+
+    def post(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        user = serializer.validated_data['user']
+        token, created = Token.objects.get_or_create(user=user)
+        usuario = CustomUsuario.objects.filter(username=user)
+        usuario = serializers.serialize('python', usuario)
+        return Response({'token': token.key, 'usuario': usuario})
+    
+
+obtain_auth_token_user = ObtainAuthTokenUser.as_view()
 

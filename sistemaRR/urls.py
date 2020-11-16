@@ -18,7 +18,6 @@ from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
-from rest_framework.authtoken.views import obtain_auth_token
 
 import av
 from av.api.urls import router
@@ -27,6 +26,7 @@ from rest_framework import permissions
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from core.views import obtain_auth_token_user
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -50,7 +50,7 @@ urlpatterns = [
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
     path('auth/', include('rest_framework.urls')),
     path('accounts/', include('rest_framework.urls')),
-    path('api-token-auth/', obtain_auth_token, name='api_token_auth'),
+    path('api-token-auth/', obtain_auth_token_user, name='api_token_auth'),
     path("", include("authentication.urls")),  # Auth routes - login / register
     path("backend-av/", include("av.avcadastro.urls")),
     path("", include("core.urls"))  # UI Kits Html files
