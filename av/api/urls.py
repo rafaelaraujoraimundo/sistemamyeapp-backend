@@ -5,8 +5,6 @@ from rest_framework.routers import SimpleRouter
 from .views import (FilialViewSet, EmpresaViewSet, PainelGeralViewSet, DetalheIndicadorViewSet, NotaFilialViewSet,
                     NotaViewSet, CalculoMensal)
 
-
-
 router = SimpleRouter()
 router.register('filial', FilialViewSet)
 router.register('empresa', EmpresaViewSet)

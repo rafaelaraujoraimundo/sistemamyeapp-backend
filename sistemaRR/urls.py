@@ -13,20 +13,22 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from rest_auth import urls
 from django.conf import settings
 from django.conf.urls import url
 from django.conf.urls.static import static
 from django.contrib import admin
 from django.urls import path, include
+from rest_framework_jwt.views import obtain_jwt_token, refresh_jwt_token
 
 import av
 from av.api.urls import router
 
 from rest_framework import permissions
+
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
-from core.views import obtain_auth_token_user
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -45,13 +47,22 @@ urlpatterns = [
     path('admin/', admin.site.urls),  # Django admin route 
     path('api/v1/', include(router.urls)),
     path('api/', include(av.api.urls)),
+    path('accounts/', include('rest_framework.urls')),
+    path('auth/', include('rest_auth.urls')),
+    path('auth/refresh-token/', refresh_jwt_token),
+    
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
+    
+    
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+
+
+"""
+    Authenticação antiga
     path('auth/', include('rest_framework.urls')),
-    path('accounts/', include('rest_framework.urls')),
+   
     path('api-token-auth/', obtain_auth_token_user, name='api_token_auth'),
     path("", include("authentication.urls")),  # Auth routes - login / register
-    path("backend-av/", include("av.avcadastro.urls")),
-    path("", include("core.urls"))  # UI Kits Html files
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    """ 

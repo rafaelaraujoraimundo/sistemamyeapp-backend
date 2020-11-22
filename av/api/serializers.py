@@ -129,14 +129,19 @@ class NotaSerializer(serializers.ModelSerializer):
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
+    filial = FilialSerializer(source='idfilial')
+    empresa = EmpresaSerializer(source='idempresa')
+    
     class Meta:
         model = CustomUsuario
         fields = (
             'email',
             'first_name',
-            'last_name'
+            'last_name',
             'fone',
-            'idfilial',
-            'idempresa',
-            'perfil'
+            'perfil',
+            'idmodulos',
+            'filial',
+            'empresa',
+            
         )

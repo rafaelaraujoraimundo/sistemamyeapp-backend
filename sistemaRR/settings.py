@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -41,22 +42,34 @@ INSTALLED_APPS = [
     'django_celery_results',
     'django_celery_beat',
     'drf_yasg',
+    'corsheaders',
+    
+    # JWT LOGIN TOKEN
+    'django.contrib.sites',
+    'allauth',
+    'allauth.account',
+    'rest_auth',
+    'rest_auth.registration',
+    
     # PACOTES REST FRAMEWORK
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
+    
     # MODULO
     'core',
-    'av.dashboard',
+    'av.api',
     'av.avcadastro',
-    'av.api'
 
 ]
 
 MIDDLEWARE = [
+    
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
@@ -144,22 +157,23 @@ MEDIA_ROOT = os.path.join(BASE_DIR, "media")
 
 # Redirect do Login_requiride
 
-LOGIN_REDIRECT_URL = 'home'
+LOGIN_REDIRECT_URL = ''
 
-LOGOUT_REDIRECT_URL = 'login'
+LOGOUT_REDIRECT_URL = ''
 
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
 
 REST_FRAMEWORK = {
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
-    ),
     'DEFAULT_PERMISSION_CLASSES': (
         'rest_framework.permissions.IsAuthenticated',
-        #'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ),
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
+    'NON_FIELD_ERRORS_KEY': 'global',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 50,
     'DEFAULT_THROTTLE_CLASSES': [
@@ -171,3 +185,19 @@ REST_FRAMEWORK = {
         'user': '99/minute'
     }
 }
+
+# JWT settings
+REST_USE_JWT = True
+
+JWT_AUTH = {
+    'JWT_ALLOW_REFRESH': True,
+    'JWT_EXPIRATION_DELTA': timedelta(days=2),
+}
+
+SITE_ID=1
+
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'av.api.serializers.UsuarioSerializer',
+}
+
+CORS_ORIGIN_ALLOW_ALL = True

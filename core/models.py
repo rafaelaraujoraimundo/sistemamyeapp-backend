@@ -95,8 +95,8 @@ class CustomUsuario(AbstractUser):
     fone = models.CharField('Telefone', max_length=15)
     is_staff = models.BooleanField('Membro da Equipe', default=True)
     idperfil = models.IntegerField(db_column='idperfil', null=True)
-    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, db_column='idfilial', blank=True, null=True)
-    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, db_column='idempresa', blank=True, null=True)
+    idfilial = models.ForeignKey(Filial, models.DO_NOTHING, db_column='idfilial', blank=True, null=True, related_name='usuariofilial')
+    idempresa = models.ForeignKey(Empresa, models.DO_NOTHING, db_column='idempresa', blank=True, null=True, related_name='usuarioempresa')
     perfil = StdImageField('Imagem', upload_to='perfil', variations={'thumb': (96, 96)})
     idmodulos = models.ManyToManyField(Modulos)
     USERNAME_FIELD = 'email'
