@@ -26,7 +26,7 @@ SECRET_KEY = '0s3^)s3xotyvj19nv^)h2dvcs4r+k@*!!&9gd*8z7(d-%n06)%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -186,7 +186,7 @@ REST_FRAMEWORK = {
     ),
     'NON_FIELD_ERRORS_KEY': 'global',
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'PAGE_SIZE': 50,
+    'PAGE_SIZE': 1000,
     'DEFAULT_THROTTLE_CLASSES': [
         'rest_framework.throttling.AnonRateThrottle',
         'rest_framework.throttling.UserRateThrottle'

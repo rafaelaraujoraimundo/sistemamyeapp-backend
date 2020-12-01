@@ -69,6 +69,28 @@ class ListModelMixinEmpresa(mixins.ListModelMixin):
 
 
 """
+Detalhe Indicador
+"""
+
+
+class CreateModelMixinDetalheIndicador(mixins.CreateModelMixin):
+    """
+    Create a model instance.
+    """
+
+    def create(self, request, *args, **kwargs):
+        request.data.update({'criadopor': request.user.id})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.criadopor = request.user
+        serializer.idempresa = request.user.idempresa
+        serializer.idfilial = request.user.idfilial
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+
+"""
 API de Relação de Filiais
 """
 
@@ -111,7 +133,7 @@ class PainelGeralViewSet(
 
 class DetalheIndicadorViewSet(
     ListModelMixinFilialEmpresa,
-    CreateModelMixinUserFilialEmpresa,
+    CreateModelMixinDetalheIndicador,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
@@ -119,6 +141,18 @@ class DetalheIndicadorViewSet(
 ):
     queryset = DetalheIndicador.objects.all()
     serializer_class = DetalheIndicadorSerializer
+
+
+class IndicadorPrincipalViewSet(
+    ListModelMixinFilialEmpresa,
+    CreateModelMixinUserFilialEmpresa,
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    viewsets.GenericViewSet
+):
+    queryset = Indicador.objects.all()
+    serializer_class = IndicadorSerializer
 
 
 class NotaFilialViewSet(
@@ -145,16 +179,53 @@ class CalculoMensal(APIView):
     """
     API de Avaliação
     """
+
     def post(self, request):
         periodo = request.data['periodo']
-        NotaFilial.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial, periodo=periodo).delete()
-        PainelGeral.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial, periodo=periodo).delete()
-        
+        NotaFilial.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial,
+                                  periodo=periodo).delete()
+        PainelGeral.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial,
+                                   periodo=periodo).delete()
+
         try:
             calcular_indicador(request.user.idempresa.id, request.user.idfilial.id, periodo, request.user)
-            return Response({"result": {"empresa": request.user.idempresa.nomeempresa, "filial": request.user.idfilial.nomefilial, "Periodo": 
-                periodo, "Status": "OK"}}, status=status.HTTP_201_CREATED)
+            return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
+                                         "filial": request.user.idfilial.nomefilial, "Periodo":
+                                             periodo, "Status": "OK"}}, status=status.HTTP_201_CREATED)
         except  Exception as e:
-            return Response({"result": {"empresa": request.user.idempresa.nomeempresa, "filial": request.user.idfilial.nomefilial, "Periodo":
-                periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
+                                         "filial": request.user.idfilial.nomefilial, "Periodo":
+                                             periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
 
+
+class Dashboard(APIView):
+    """
+    API PARA MONTAGEM DO DASHBOARD
+    """
+
+    def post(self, request):
+        periodo = request.data['periodo']
+        NotaFilialDashBoard = NotaFilial.objects.filter(idempresa=request.user.idempresa,
+                                                        idfilial=request.user.idfilial,
+                                                        periodo=periodo)
+        PainelGeralDashboard = PainelGeral.objects.filter(idempresa=request.user.idempresa,
+                                                          idfilial=request.user.idfilial,
+                                                          periodo=periodo)
+        DetalheIndicadorDashboard = DetalheIndicador.objects.filter(idempresa=request.user.idempresa,
+                                                                    idfilial=request.user.idfilial,
+                                                                    periodo=periodo)
+        filtros =  NotaFilial.objects.filter(idempresa=request.user.idempresa,
+                                                        idfilial=request.user.idfilial)
+        graficos = PainelGeral.objects.filter(idempresa=request.user.idempresa,
+                                                          idfilial=request.user.idfilial)
+        notafilialSerializer = NotaFilialSerializer(NotaFilialDashBoard, many=True)
+        painelgeralSerializer = PainelGeralSerializer(PainelGeralDashboard, many=True)
+        detalheindicadorserializer = DetalheIndicadorSerializer(DetalheIndicadorDashboard, many=True)
+        filtrosSerializer = NotaFilialSerializer(filtros, many=True)
+        graficosSerializer = PainelGeralSerializer(graficos, many=True)
+        return Response({"results": {"notaFilial": notafilialSerializer.data,
+                                    "painelGeral": painelgeralSerializer.data,
+                                    "detalheIndicador": detalheindicadorserializer.data,
+                                     "filtros": filtrosSerializer.data,
+                                     "graficos": graficosSerializer.data }},
+                        status=status.HTTP_200_OK)

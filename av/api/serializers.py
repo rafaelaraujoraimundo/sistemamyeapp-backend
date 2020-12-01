@@ -27,7 +27,7 @@ class FilialSerializer(serializers.ModelSerializer):
 
 class EmpresaSerializer(serializers.ModelSerializer):
     # Nested RelantionShip
-    filiais = FilialSerializer(many=True, read_only=True)                                  
+    filiais = FilialSerializer(many=True, read_only=True, required=False)                                  
 
     # HyperLInked Related Field
     #idempresas = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='avaliacao-detail')
@@ -67,6 +67,7 @@ class IndicadorSerializer(serializers.ModelSerializer):
 
 
 class PainelGeralSerializer(serializers.ModelSerializer):
+    indicadorPrincipal = IndicadorSerializer(source='idindicador', required=False)
     
     class Meta:
         model = PainelGeral
@@ -79,15 +80,18 @@ class PainelGeralSerializer(serializers.ModelSerializer):
             'realizado',
             'peso',
             'pontuacao',
-            'criadopor'
+            'criadopor',
+            'indicadorPrincipal',
         )
 
 
 class DetalheIndicadorSerializer(serializers.ModelSerializer):
+    indicador = IndicadorSerializer(source='idindicador', required=False)
     
     class Meta:
         model = DetalheIndicador
         fields = (
+            'id',
             'idempresa',
             'idfilial',
             'periodo',
@@ -98,20 +102,8 @@ class DetalheIndicadorSerializer(serializers.ModelSerializer):
             'modoindicador',
             'incluso',
             'Inverso',
-            'criadopor'
-        )
-
-
-class NotaFilialSerializer(serializers.ModelSerializer):
-    
-    class Meta:
-        model = NotaFilial
-        fields = (
-            'idempresa',
-            'idfilial',
-            'periodo',
-            'nota',
-            'criadopor'
+            'criadopor',
+            'indicador'
         )
 
 
@@ -124,17 +116,31 @@ class NotaSerializer(serializers.ModelSerializer):
             'inicio',
             'fim',
             'cor',
-            'criadopor'           
+            'criadopor'
+        )
+
+
+class NotaFilialSerializer(serializers.ModelSerializer):
+        
+    class Meta:
+        model = NotaFilial
+        fields = (
+            'idempresa',
+            'idfilial',
+            'periodo',
+            'nota',
+            'criadopor',
         )
 
 
 class UsuarioSerializer(serializers.ModelSerializer):
-    filial = FilialSerializer(source='idfilial')
-    empresa = EmpresaSerializer(source='idempresa')
+    filial = FilialSerializer(source='idfilial', required=False)
+    empresa = EmpresaSerializer(source='idempresa', required=False)
     
     class Meta:
         model = CustomUsuario
         fields = (
+            'id',
             'email',
             'first_name',
             'last_name',
@@ -145,3 +151,5 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'empresa',
             
         )
+
+

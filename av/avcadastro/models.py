@@ -48,7 +48,7 @@ class PainelGeral(Base):
     realizado = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     peso = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     pontuacao = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
-
+    
     class Meta:
         managed = True
         db_table = 'av_painelgeral'
@@ -72,7 +72,7 @@ class DetalheIndicador(Base):
     periodo = models.CharField(max_length=6, blank=False, null=False)
     idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filialdetalheindicador', blank=False, null=False)
     idindicador = models.ForeignKey(Indicador, models.DO_NOTHING, related_name='indicador', blank=False, null=False)
-    descricao = models.CharField(max_length=100, blank=False, null=False, unique=True)
+    descricao = models.CharField(max_length=100, blank=False, null=False)
     meta = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     resultado = models.DecimalField(max_digits=18, decimal_places=2, blank=False, null=False)
     modoindicador = models.CharField(max_length=3, choices=CHOICE_MODO, blank=False, null=False)
@@ -82,6 +82,7 @@ class DetalheIndicador(Base):
     class Meta:
         managed = True
         db_table = 'av_detalheindicador'
+        ordering = ['periodo', 'idindicador']
 
     def __str__(self):
         return self.descricao
@@ -99,13 +100,11 @@ class NotaFilial(Base):
     idfilial = models.ForeignKey(Filial, models.DO_NOTHING, related_name='filialnota', blank=False, null=False)
     periodo = models.CharField(max_length=6, blank=False, null=False)
     nota = models.CharField(max_length=1, choices=CHOICE_NOTA, blank=False, null=False)
-
+    
     class Meta:
         managed = True
         db_table = 'av_notafilial'
-        unique_together = ('idfilial', 'periodo')
-        
-    
+        unique_together = ('idfilial', 'periodo', 'idempresa')
         
     def __str__(self):
         return self.nota
