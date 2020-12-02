@@ -211,11 +211,8 @@ CORS_ALLOWED_ORIGINS = [
     "http://floating-brook-29227.herokuapp.com",
     "http://127.0.0.1:9000"
 ]
-CORS_ORIGIN_ALLOW_ALL = True
-CORS_ALLOW_CREDENTIALS = True
-CORS_ORIGIN_WHITELIST = (
-    'floating-brook-29227.herokuapp.com',
-)
+CORS_ALLOW_ALL_ORIGINS = True
+
 CORS_ALLOW_HEADERS = (
         'x-requested-with',
         'content-type',
