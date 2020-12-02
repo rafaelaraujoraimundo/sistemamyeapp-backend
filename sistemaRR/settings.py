@@ -208,7 +208,7 @@ REST_AUTH_SERIALIZERS = {
 CORS_ALLOWED_ORIGINS = [
     "https://example.com",
     "https://sub.example.com",
-    "http://floating-brook-29227.herokuapp.com",
+    "gi",
     "http://127.0.0.1:9000"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
