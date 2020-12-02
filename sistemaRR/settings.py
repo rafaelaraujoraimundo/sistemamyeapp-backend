@@ -26,7 +26,7 @@ SECRET_KEY = '0s3^)s3xotyvj19nv^)h2dvcs4r+k@*!!&9gd*8z7(d-%n06)%'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['backendmyeapp.herokuapp.com', 'floating-brook-29227.herokuapp.com']
+ALLOWED_HOSTS = ['*']
 
 # Application definition
 
