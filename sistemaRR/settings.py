@@ -212,3 +212,9 @@ REST_AUTH_SERIALIZERS = {
 }
 
 CORS_ORIGIN_ALLOW_ALL = True
+
+
+
+# Habilitar Heroku
+import django_heroku
+django_heroku.settings(locals())
