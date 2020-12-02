@@ -2616,14 +2616,6 @@
 },
 {
     "model": "contenttypes.contenttype",
-    "pk": 13,
-    "fields": {
-        "app_label": "authtoken",
-        "model": "token"
-    }
-},
-{
-    "model": "contenttypes.contenttype",
     "pk": 14,
     "fields": {
         "app_label": "authtoken",
