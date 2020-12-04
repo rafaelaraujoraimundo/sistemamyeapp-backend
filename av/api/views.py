@@ -206,7 +206,7 @@ class CalculoMensal(APIView):
                                        periodo=periodo).delete()
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
-                                             periodo, "Status": "OK"}}, status=status.HTTP_201_CREATED)
+                                             periodo, "Status": "Excluido Processo Mensal"}}, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
