@@ -177,7 +177,7 @@ class NotaViewSet(
 
 class CalculoMensal(APIView):
     """
-    API de Avaliação
+    API de Calculo Mensal
     """
 
     def post(self, request):
@@ -196,8 +196,23 @@ class CalculoMensal(APIView):
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
                                              periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
-
-
+    
+    def delete(self, request):
+        try:
+            periodo = request.data['periodo']
+            NotaFilial.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial,
+                                      periodo=periodo).delete()
+            PainelGeral.objects.filter(idempresa=request.user.idempresa, idfilial=request.user.idfilial,
+                                       periodo=periodo).delete()
+            return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
+                                         "filial": request.user.idfilial.nomefilial, "Periodo":
+                                             periodo, "Status": "OK"}}, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
+                                         "filial": request.user.idfilial.nomefilial, "Periodo":
+                                             periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
+        
+        
 class Dashboard(APIView):
     """
     API PARA MONTAGEM DO DASHBOARD

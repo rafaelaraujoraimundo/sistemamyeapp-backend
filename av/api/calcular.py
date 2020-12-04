@@ -12,88 +12,91 @@ def calcular_indicador(empresaid, filialid, periodo, user):
     pontuacao_nota = Decimal(0)
     
     for indicador in indicadores:
-        if indicador.modo == 'UNI':
-            painelgeral = PainelGeral()
-            detalheindicador = DetalheIndicador.objects.get(periodo=periodo, idempresa=empresa, idfilial=filial,
-                                                            idindicador=indicador, incluso=True)
-            painelgeral.idempresa = empresa
-            painelgeral.idfilial = filial
-            painelgeral.criadopor = user
-            painelgeral.periodo = periodo
-            painelgeral.idindicador = indicador
-            painelgeral.peso = indicador.peso
-            painelgeral.orcadometa = detalheindicador.meta
-            painelgeral.realizado = detalheindicador.resultado
-            painelgeral.peso = indicador.peso
-            if detalheindicador.Inverso:
-                if detalheindicador.resultado <= detalheindicador.meta:
-                    painelgeral.pontuacao = painelgeral.peso
-
-                    """
-                    Somando pesos e pontuações para fazer o quadro de Notas por filial
-                    """
-                    peso_nota = peso_nota + painelgeral.peso
-                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+        detalheindicador = DetalheIndicador.objects.filter(periodo=periodo, idempresa=empresa, idfilial=filial,
+                                                           idindicador=indicador, incluso=True)
+        if detalheindicador.count() != 0:
+            if indicador.modo == 'UNI':
+                painelgeral = PainelGeral()
+                detalheindicador = DetalheIndicador.objects.get(periodo=periodo, idempresa=empresa, idfilial=filial,
+                                                                idindicador=indicador, incluso=True)
+                painelgeral.idempresa = empresa
+                painelgeral.idfilial = filial
+                painelgeral.criadopor = user
+                painelgeral.periodo = periodo
+                painelgeral.idindicador = indicador
+                painelgeral.peso = indicador.peso
+                painelgeral.orcadometa = detalheindicador.meta
+                painelgeral.realizado = detalheindicador.resultado
+                painelgeral.peso = indicador.peso
+                if detalheindicador.Inverso:
+                    if detalheindicador.resultado <= detalheindicador.meta:
+                        painelgeral.pontuacao = painelgeral.peso
+    
+                        """
+                        Somando pesos e pontuações para fazer o quadro de Notas por filial
+                        """
+                        peso_nota = peso_nota + painelgeral.peso
+                        pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+                    else:
+                        painelgeral.pontuacao = 0
                 else:
-                    painelgeral.pontuacao = 0
-            else:
-                if detalheindicador.resultado >= detalheindicador.meta:
-                    painelgeral.pontuacao = painelgeral.peso
+                    if detalheindicador.resultado >= detalheindicador.meta:
+                        painelgeral.pontuacao = painelgeral.peso
+                        
+                        """
+                        Somando pesos e pontuações para fazer o quadro de Notas por filial
+                        """
+                        peso_nota = peso_nota + painelgeral.peso
+                        pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
                     
-                    """
-                    Somando pesos e pontuações para fazer o quadro de Notas por filial
-                    """
-                    peso_nota = peso_nota + painelgeral.peso
-                    pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+                    else:
+                        painelgeral.pontuacao = 0
+    
+                painelgeral.save()
+                del painelgeral
+    
+            elif indicador.modo == 'CON':
+                painelgeral = PainelGeral()
+                detalheindicador = DetalheIndicador.objects.filter(periodo=periodo, idempresa=empresa, idfilial=filial,
+                                                                   idindicador=indicador, incluso=True)
+                painelgeral.idempresa = empresa
+                painelgeral.idfilial = filial
+                painelgeral.criadopor = user
+                painelgeral.periodo = periodo
+                painelgeral.idindicador = indicador
+                painelgeral.peso = indicador.peso
+                painelgeral.orcadometa = detalheindicador.count()
+                """
+                Zerando o Realizado para nao dar erro de Tipos diferentes.
+                """
+                painelgeral.realizado = 0
+    
+                for detalhe in detalheindicador:
+    
+                    if detalhe.Inverso:
+                        if detalhe.resultado <= detalhe.meta:
+                            painelgeral.realizado = painelgeral.realizado + 1
+                        else:
+                            painelgeral.pontuacao = 0
+                    else:
+                        if detalhe.resultado >= detalhe.meta:
+                            painelgeral.realizado = painelgeral.realizado + 1
+                        else:
+                            painelgeral.pontuacao = 0
+    
+                painelgeral.pontuacao = painelgeral.realizado * Decimal(100) / painelgeral.orcadometa
+    
+                painelgeral.pontuacao = painelgeral.pontuacao * painelgeral.peso / Decimal(100)
                 
-                else:
-                    painelgeral.pontuacao = 0
-
-            painelgeral.save()
-            del painelgeral
-
-        elif indicador.modo == 'CON':
-            painelgeral = PainelGeral()
-            detalheindicador = DetalheIndicador.objects.filter(periodo=periodo, idempresa=empresa, idfilial=filial,
-                                                               idindicador=indicador, incluso=True)
-            painelgeral.idempresa = empresa
-            painelgeral.idfilial = filial
-            painelgeral.criadopor = user
-            painelgeral.periodo = periodo
-            painelgeral.idindicador = indicador
-            painelgeral.peso = indicador.peso
-            painelgeral.orcadometa = detalheindicador.count()
-            """
-            Zerando o Realizado para nao dar erro de Tipos diferentes.
-            """
-            painelgeral.realizado = 0
-
-            for detalhe in detalheindicador:
-
-                if detalhe.Inverso:
-                    if detalhe.resultado <= detalhe.meta:
-                        painelgeral.realizado = painelgeral.realizado + 1
-                    else:
-                        painelgeral.pontuacao = 0
-                else:
-                    if detalhe.resultado >= detalhe.meta:
-                        painelgeral.realizado = painelgeral.realizado + 1
-                    else:
-                        painelgeral.pontuacao = 0
-
-            painelgeral.pontuacao = painelgeral.realizado * Decimal(100) / painelgeral.orcadometa
-
-            painelgeral.pontuacao = painelgeral.pontuacao * painelgeral.peso / Decimal(100)
-            
-            """
-            Somando pesos e pontuações para fazer o quadro de Notas por filial
-            """
-            peso_nota = peso_nota + painelgeral.peso
-            pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
-            
-            
-            painelgeral.save()
-            del painelgeral
+                """
+                Somando pesos e pontuações para fazer o quadro de Notas por filial
+                """
+                peso_nota = peso_nota + painelgeral.peso
+                pontuacao_nota = pontuacao_nota + painelgeral.pontuacao
+                
+                
+                painelgeral.save()
+                del painelgeral
 
         elif indicador.modo == 'CAL':
 
