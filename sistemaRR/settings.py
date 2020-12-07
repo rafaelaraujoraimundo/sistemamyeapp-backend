@@ -197,7 +197,7 @@ REST_USE_JWT = True
 
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
-    'JWT_EXPIRATION_DELTA': timedelta(minutes=60),
+    'JWT_EXPIRATION_DELTA': timedelta(minutes=1),
 }
 
 SITE_ID=1
