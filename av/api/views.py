@@ -40,6 +40,23 @@ class CreateModelMixinUserFilialEmpresa(mixins.CreateModelMixin):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+    
+
+class CreateModelMixinUserAdminFilialEmpresa(mixins.CreateModelMixin):
+    """
+    Create a model instance.
+    """
+
+    def create(self, request, *args, **kwargs):
+        request.data.update({'criadopor': request.user.id})
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.criadopor = request.user
+        serializer.idempresa = request.user.idempresa
+        serializer.idfilial = request.user.idfilial
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
 
 class ListModelMixinFilialEmpresa(mixins.ListModelMixin):
@@ -96,7 +113,7 @@ API de Relação de Filiais
 
 
 class FilialViewSet(
-    ListModelMixinEmpresa,
+    mixins.ListModelMixin,
     CreateModelMixinUser,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
@@ -108,8 +125,8 @@ class FilialViewSet(
 
 
 class EmpresaViewSet(
-    ListModelMixinEmpresa,
-    CreateModelMixinUser,
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
     mixins.RetrieveModelMixin,
     mixins.UpdateModelMixin,
     mixins.DestroyModelMixin,
