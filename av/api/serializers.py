@@ -4,30 +4,9 @@ from django.db.models import Avg
 from av.avcadastro.models import Indicador, PainelGeral, DetalheIndicador, NotaFilial, Nota
 from core.models import Filial, Empresa, CustomUsuario
 
-
-class FilialSerializer(serializers.ModelSerializer):
-
-    class Meta:
-        model = Filial
-        fields = (
-            'id',
-            'codfilial',
-            'nomefilial',
-            'cnpj',
-            'idempresa',
-            'criadopor'
-        )
-
-    """def validate_avaliacao(self, valor):
-        if valor in range(1, 6):
-            return valor
-        raise serializers.ValidationError('A Avalição precisa ser entre 1 e 5')
-    """
-
-
 class EmpresaSerializer(serializers.ModelSerializer):
     # Nested RelantionShip
-    filiais = FilialSerializer(many=True, read_only=True, required=False)                                  
+    #filiais = FilialSerializer(many=True, read_only=True, required=False)                                  
 
     # HyperLInked Related Field
     #idempresas = serializers.HyperlinkedRelatedField(many=True, read_only=True, view_name='avaliacao-detail')
@@ -44,11 +23,32 @@ class EmpresaSerializer(serializers.ModelSerializer):
             'nomeempresa',
             'logoempresa',
             'ativo',
-            'filiais',
             'criadopor'
         )
-        
 
+class FilialSerializer(serializers.ModelSerializer):
+    
+    empresa = EmpresaSerializer(source='idempresa', required=False)
+    
+    class Meta:
+        model = Filial
+        fields = (
+            'id',
+            'codfilial',
+            'nomefilial',
+            'cnpj',
+            'idempresa',
+            'criadopor',
+            'empresa'
+        )
+
+    """def validate_avaliacao(self, valor):
+        if valor in range(1, 6):
+            return valor
+        raise serializers.ValidationError('A Avalição precisa ser entre 1 e 5')
+    """
+
+     
 class IndicadorSerializer(serializers.ModelSerializer):
     
     class Meta:
