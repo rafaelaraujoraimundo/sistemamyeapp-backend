@@ -152,13 +152,14 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'filial',
             'empresa',
             'password',
+            'idfilial',
+            'idempresa'
         )
 
-        def create(self, validated_data):
-            password = validated_data.pop('password')
-            user = CustomUsuario(**validated_data)
-            user.set_password(password)
-            user.save()
-            return user
-
-
+    def create(self, validated_data):
+        user = super(UsuarioSerializer, self).create(validated_data)
+        user.set_password(validated_data['password'])
+        if self.initial_data["admin"]:
+            user.is_superuser = True
+        user.save()
+        return user
