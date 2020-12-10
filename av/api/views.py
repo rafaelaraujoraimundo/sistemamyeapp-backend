@@ -3,11 +3,12 @@ from django.core import serializers
 from rest_framework import mixins
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from core.models import CustomUsuario
 
 from av.avcadastro.models import Filial, Empresa, Indicador, PainelGeral, DetalheIndicador, NotaFilial, Nota
 from .calcular import calcular_indicador
 from .serializers import EmpresaSerializer, FilialSerializer, IndicadorSerializer, PainelGeralSerializer, \
-    DetalheIndicadorSerializer, NotaFilialSerializer, NotaSerializer
+    DetalheIndicadorSerializer, NotaFilialSerializer, NotaSerializer, UsuarioSerializer
 
 
 class CreateModelMixinUser(mixins.CreateModelMixin):
@@ -40,7 +41,7 @@ class CreateModelMixinUserFilialEmpresa(mixins.CreateModelMixin):
         self.perform_create(serializer)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-    
+
 
 class CreateModelMixinUserAdminFilialEmpresa(mixins.CreateModelMixin):
     """
@@ -213,7 +214,7 @@ class CalculoMensal(APIView):
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
                                              periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
-    
+
     def delete(self, request):
         try:
             periodo = request.data['periodo']
@@ -223,13 +224,14 @@ class CalculoMensal(APIView):
                                        periodo=periodo).delete()
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
-                                             periodo, "Status": "Excluido Processo Mensal"}}, status=status.HTTP_201_CREATED)
+                                             periodo, "Status": "Excluido Processo Mensal"}},
+                            status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"results": {"empresa": request.user.idempresa.nomeempresa,
                                          "filial": request.user.idfilial.nomefilial, "Periodo":
                                              periodo, "Status": e.args}}, status=status.HTTP_400_BAD_REQUEST)
-        
-        
+
+
 class Dashboard(APIView):
     """
     API PARA MONTAGEM DO DASHBOARD
@@ -246,18 +248,23 @@ class Dashboard(APIView):
         DetalheIndicadorDashboard = DetalheIndicador.objects.filter(idempresa=request.user.idempresa,
                                                                     idfilial=request.user.idfilial,
                                                                     periodo=periodo)
-        filtros =  NotaFilial.objects.filter(idempresa=request.user.idempresa,
-                                                        idfilial=request.user.idfilial)
+        filtros = NotaFilial.objects.filter(idempresa=request.user.idempresa,
+                                            idfilial=request.user.idfilial)
         graficos = PainelGeral.objects.filter(idempresa=request.user.idempresa,
-                                                          idfilial=request.user.idfilial)
+                                              idfilial=request.user.idfilial)
         notafilialSerializer = NotaFilialSerializer(NotaFilialDashBoard, many=True)
         painelgeralSerializer = PainelGeralSerializer(PainelGeralDashboard, many=True)
         detalheindicadorserializer = DetalheIndicadorSerializer(DetalheIndicadorDashboard, many=True)
         filtrosSerializer = NotaFilialSerializer(filtros, many=True)
         graficosSerializer = PainelGeralSerializer(graficos, many=True)
         return Response({"results": {"notaFilial": notafilialSerializer.data,
-                                    "painelGeral": painelgeralSerializer.data,
-                                    "detalheIndicador": detalheindicadorserializer.data,
+                                     "painelGeral": painelgeralSerializer.data,
+                                     "detalheIndicador": detalheindicadorserializer.data,
                                      "filtros": filtrosSerializer.data,
-                                     "graficos": graficosSerializer.data }},
+                                     "graficos": graficosSerializer.data}},
                         status=status.HTTP_200_OK)
+
+
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = CustomUsuario.objects.all()
+    serializer_class = UsuarioSerializer

@@ -4,6 +4,7 @@ from django.db.models import Avg
 from av.avcadastro.models import Indicador, PainelGeral, DetalheIndicador, NotaFilial, Nota
 from core.models import Filial, Empresa, CustomUsuario
 
+
 class EmpresaSerializer(serializers.ModelSerializer):
     # Nested RelantionShip
     #filiais = FilialSerializer(many=True, read_only=True, required=False)                                  
@@ -25,6 +26,7 @@ class EmpresaSerializer(serializers.ModelSerializer):
             'ativo',
             'criadopor'
         )
+
 
 class FilialSerializer(serializers.ModelSerializer):
     
@@ -149,7 +151,14 @@ class UsuarioSerializer(serializers.ModelSerializer):
             'idmodulos',
             'filial',
             'empresa',
-            
+            'password',
         )
+
+        def create(self, validated_data):
+            password = validated_data.pop('password')
+            user = CustomUsuario(**validated_data)
+            user.set_password(password)
+            user.save()
+            return user
 
 
