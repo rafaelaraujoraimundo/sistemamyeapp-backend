@@ -159,7 +159,7 @@ class UsuarioSerializer(serializers.ModelSerializer):
     def create(self, validated_data):
         user = super(UsuarioSerializer, self).create(validated_data)
         user.set_password(validated_data['password'])
-        
+        user.username = user.email
         if self.initial_data["admin"] == 'true':
             user.is_superuser = True
         else:
