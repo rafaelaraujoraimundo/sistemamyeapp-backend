@@ -151,7 +151,7 @@ USE_TZ = True
 
 AUTH_USER_MODEL = 'core.CustomUsuario'
 
-# Arquivos Estaticos
+# Arquivos EstaticosOLD_PASSWORD_FIELD_ENABLED
 
 STATIC_URL = '/static/'
 
@@ -194,7 +194,7 @@ REST_FRAMEWORK = {
 
 # JWT settings
 REST_USE_JWT = True
-
+OLD_PASSWORD_FIELD_ENABLED = True
 JWT_AUTH = {
     'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': timedelta(minutes=60),
