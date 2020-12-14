@@ -16,7 +16,7 @@ router.register('indicadorPrincipial', IndicadorPrincipalViewSet)
 router.register(r'users', UserViewSet)
 
 urlpatterns = [
+    
     path('calcular/', CalculoMensal.as_view()),
     path('dashboard/', Dashboard.as_view()),
 ]
-

@@ -43,19 +43,19 @@ INSTALLED_APPS = [
     'django_celery_beat',
     'drf_yasg',
     'corsheaders',
-    
+
     # JWT LOGIN TOKEN
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'rest_auth',
     'rest_auth.registration',
-    
+
     # PACOTES REST FRAMEWORK
     'django_filters',
     'rest_framework',
     'rest_framework.authtoken',
-    
+
     # MODULO
     'core',
     'av.api',
@@ -200,29 +200,38 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': timedelta(minutes=60),
 }
 
-SITE_ID=1
+SITE_ID = 1
+
+ACCOUNT_FORMS = {'reset_password_from_key': 'mysite.forms.MyCustomResetPasswordKeyForm'}
 
 REST_AUTH_SERIALIZERS = {
     'USER_DETAILS_SERIALIZER': 'av.api.serializers.UsuarioSerializer',
 }
 CORS_ALLOWED_ORIGINS = [
-    "https://example.com",
-    "https://sub.example.com",
     "http://floating-brook-29227.herokuapp.com",
     "http://127.0.0.1:9000"
 ]
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 CORS_ALLOW_HEADERS = (
-        'x-requested-with',
-        'content-type',
-        'accept',
-        'origin',
-        'authorization',
-        'x-csrftoken'
+    'x-requested-with',
+    'content-type',
+    'accept',
+    'origin',
+    'authorization',
+    'x-csrftoken'
 )
-
 
 # Habilitar Heroku
 import django_heroku
+
 django_heroku.settings(locals())
+
+# SERVIDOR DE EMAIL
+EMAIL_HOST = 'smtp.office365.com'
+EMAIL_PORT = '587'
+EMAIL_HOST_USER = 'servicos@prosaude.org.br'
+EMAIL_HOST_PASSWORD = 'email@2000'
+EMAIL_USE_TLS = True
+EMAIL_USE_SSL = False
+DEFAULT_FROM_EMAIL = 'servicos@prosaude.org.br'
