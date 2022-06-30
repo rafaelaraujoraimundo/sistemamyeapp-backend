@@ -3,3 +3,5 @@ venv
 *.pyc
 sistemaRR/__pycache__/
 static
+myeyeapp-env
+tutorial-env

@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import dj_database_url
 from datetime import timedelta
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -104,15 +105,18 @@ WSGI_APPLICATION = 'sistemaRR.wsgi.application'
         'NAME': BASE_DIR / 'db.sqlite3',
     }
 }"""
-
+# DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)
 DATABASES = {
     "default": {
         "ENGINE": "django.db.backends.postgresql",
-        "NAME": "dbdjvqlnccdapj",
-        "USER": "ehdxvcohtbpvwh",
-        "PASSWORD": "8b11f93eb1666afb5bc349531507f36eb93e3a0dae95c293d6ab87301cec1ea8",
-        "HOST": "ec2-54-163-47-62.compute-1.amazonaws.com",
+        "NAME": "d40qjfh4aj27ft",
+        "USER": "wvyndefovjlbkh",
+        "PASSWORD": "0578f320c1b866555b36df9514a76fef1f2cadf2c0bd7664bea3532e09473d4a",
+        "HOST": "ec2-3-214-235-81.compute-1.amazonaws.com",
         "PORT": 5432,
+        "OPTIONS": {
+            "sslmode": "require",
+        },
     }
 }
 
@@ -235,3 +239,5 @@ EMAIL_HOST_PASSWORD = 'email@2000'
 EMAIL_USE_TLS = True
 EMAIL_USE_SSL = False
 DEFAULT_FROM_EMAIL = 'servicos@prosaude.org.br'
+
+#DATABASES['default'] = dj_database_url.config(conn_max_age=600, ssl_require=True)

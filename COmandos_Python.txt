@@ -1,0 +1,48 @@
+1- CLonar
+
+2- Criar ambiente virtual
+python3 -m venv cd myeyeapp-env
+
+myeyeapp-env\Scripts\activate. bat.
+
+3- Instalar Microsoft C++ Build Tools
+https://visualstudio.microsoft.com/pt-br/thank-you-downloading-visual-studio/?sku=BuildTools&rel=16
+
+4 Recuperar as dependecias do Projto
+pip install -r requirements.txt
+
+5- Verificar dados de conexão do Banco de dados
+
+
+#Instalação do Django
+pip install django
+
+# Gravar txt de todas as bibliotecas estao sendo utilizadas
+pip freeze > requirements.txt
+
+#criar projeot aonde o django1 é o nome do projeto
+django-admin startproject django1 .
+
+
+#criar aplicações aonde core é a aplicação
+django-admin startapp core
+
+#Iniciar servidor
+python manage.py runserver
+
+# Criar Migrations - pegar todos os modelos e criar os migrations com todos os modelos criados
+python manage.py makemigrations
+
+#Executar Migration
+python manage.py migrate
+
+
+#Criar super user
+python manage.py createsuperuser
+
+#Chamar o shell
+python manage.py shell
+
+#Colocar os arquivos no STATIC_ROOT no caminho para produção
+python manage.py collectstatic
+
