@@ -12,7 +12,8 @@ https://visualstudio.microsoft.com/pt-br/thank-you-downloading-visual-studio/?sk
 pip install -r requirements.txt
 
 5- Verificar dados de conexão do Banco de dados
-
+Recuperar DOnwload para o Heroku
+heroku pg:backups:restore https://backendmyeapp.herokuapp.com/media/BANCO.DUMP DATABASE_URL --app backendmyeapp
 
 #Instalação do Django
 pip install django
